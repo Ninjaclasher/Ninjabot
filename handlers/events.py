@@ -48,11 +48,10 @@ class ProfanityChecker(BaseEvent):
                 return True
         return False
 
-    @classmethod
-    def swear_check(cls, message):
+    def swear_check(self, message):
         content = message.content.strip().lower()
-        return ('ninjabot' in content or self.bot.user in message.mentions and
-                'die' in content or cls.has_swear(content))
+        return (('ninjabot' in content or self.bot.user in message.mentions) and
+                ('die' in content or self.has_swear(content)))
 
     async def trigger(self):
         before = self.kwargs.get('before', None)
@@ -66,7 +65,7 @@ class ProfanityChecker(BaseEvent):
         self.user.times_swore += 1
         self.user.save()
         new_message = await self.bot.wait_for_message(timeout=10, author=self.message.author,
-                                                          channel=self.channel, check=self.swear_check)
+                                                      channel=self.channel, check=self.swear_check)
         if new_message is not None:
             await self.send_message('NO U. Blame <@253354364746334212> for this useless feature.')
 

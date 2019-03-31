@@ -1,4 +1,3 @@
-import asyncio
 import pymysql
 import threading
 
