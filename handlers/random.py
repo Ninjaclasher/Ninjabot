@@ -89,7 +89,7 @@ class QuoteBase(BaseHandler):
         except (IndexError, ValueError):
             quote = random.choice(quotes)
 
-        em = self.create_embed(self.quote_type, quote[0])
+        em = self.create_embed(self.quote_type, quote[1])
         await self.send_message(embed=em)
 
 
