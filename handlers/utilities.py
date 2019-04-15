@@ -10,7 +10,6 @@ from handlers.base import BaseHandler
 from handlers.mixins import NonemptyMessageMixin
 from handlers.registry import register_handler
 
-import database
 import settings
 from util import help_list
 
@@ -95,7 +94,7 @@ class Clean(BaseHandler):
     def clean_check(self, message):
         _now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
         return (_now - message.timestamp < datetime.timedelta(weeks=2) and
-                message.author == database.bot.user)
+                message.author == self.bot.user)
 
     async def respond(self):
         deleted = await self.bot.purge_from(self.channel, limit=100, check=self.clean_check)
