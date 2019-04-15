@@ -13,6 +13,11 @@ class BaseHandler:
         raise NotImplementedError()
 
     async def initialize(self):
+        ping_checks = ('everyone', 'here')
+        for ping in ping_checks:
+            if '@' + ping in self.content_str.lower():
+                await self.send_message(':angry: NO MENTIONING {} :angry:'.format(ping.upper()))
+                return
         await self.respond()
 
     async def dispatch(self, **kwargs):

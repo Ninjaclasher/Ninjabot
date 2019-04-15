@@ -19,12 +19,6 @@ async def on_ready():
     print('------')
 
 async def process_command(message, content):
-    if '@everyone' in message.content.lower():
-        await database.bot.send_message(message.channel, ':angry: NO MENTIONING EVERYONE :angry:')
-        return
-    elif '@here' in message.content.lower():
-        await database.bot.send_message(message.channel, ':angry: NO MENTIONING HERE :angry:')
-        return
     # dirty way of doing this
     for i in range(len(content)):
         command = ' '.join(content[:i+1])

@@ -92,11 +92,10 @@ class EmojiList(BaseHandler):
 
 @register_handler('clean')
 class Clean(BaseHandler):
-    @classmethod
-    def clean_check(cls, message):
+    def clean_check(self, message):
         _now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
-        return (_now - message.timestamp < datetime.timedelta(weeks=2) and 
-                message.author == self.bot.user)
+        return (_now - message.timestamp < datetime.timedelta(weeks=2) and
+                message.author == database.bot.user)
 
     async def respond(self):
         deleted = await self.bot.purge_from(self.channel, limit=100, check=self.clean_check)
