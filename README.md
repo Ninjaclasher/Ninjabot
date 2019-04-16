@@ -26,7 +26,7 @@ $ mysql -uroot -p
 MariaDB> CREATE DATABASE ninjabot DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;
 MariaDB> GRANT ALL PRIVILEGES ON ninjabot.* to 'ninjabot'@'localhost' IDENTIFIED BY '<password>';
 MariaDB> exit
-$ mysqldump -uroot -p ninjabot < ninjabot.sql
+$ mysql -uroot -p ninjabot < ninjabot.sql
 ```
 
 Finally, create the necessary files:
