@@ -32,7 +32,7 @@ DROP TABLE IF EXISTS `ninjabot_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ninjabot_user` (
-  `id` varchar(18) NOT NULL,
+  `id` bigint(20) NOT NULL,
   `username` varchar(128) NOT NULL,
   `times_swore` int(11) NOT NULL,
   `awake_time_start` datetime(6) DEFAULT NULL,

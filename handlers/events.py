@@ -1,10 +1,10 @@
+import asyncio
 import logging
 import random
 
 from handlers.base import BaseEvent 
 from handlers.registry import register_event
 
-import database
 import settings
 
 
@@ -14,23 +14,23 @@ class ServerLeaver(BaseEvent):
         return True
 
     async def respond(self):
-        if self.server.id not in settings.WHITELISTED_SERVERS:
-            logging.warn('Left server %s with id %s.', self.server.name, self.server.id)
-            await self.bot.leave_server(self.server)
+        if self.guild.id not in settings.WHITELISTED_SERVERS:
+            logging.warn('Left server %s with id %s.', self.guild.name, self.guild.id)
+            await self.guild.leave()
 
 
 @register_event('reaction_adder')
 class ReactionAdder(BaseEvent):
     async def trigger(self):
-        return random.random() <= 0.005 and len(self.server.emojis) > 0
+        return random.random() <= 0.005 and len(self.guild.emojis) > 0
 
     async def respond(self):
         try:
-            await self.bot.add_reaction(self.message, random.choice(self.server.emojis))
+            await self.message.add_reaction(random.choice(self.guild.emojis))
         except:
-            logging.warn("Failed to add a reaction to %s (%s)'s message.", self.message.author, self.message.author.id)
+            logging.warn("Failed to add a reaction to %s (%s)'s message.", self.author, self.author.id)
         else:
-            logging.info("Added a reaction to %s (%s)'s message.", self.message.author, self.message.author.id)
+            logging.info("Added a reaction to %s (%s)'s message.", self.author, self.author.id)
 
 
 @register_event('profanity_checker')
@@ -49,6 +49,9 @@ class ProfanityChecker(BaseEvent):
         return False
 
     def swear_check(self, message):
+        if message.author != self.author or message.channel != self.channel:
+            return False
+
         content = message.content.strip().lower()
         return (('ninjabot' in content or self.bot.user in message.mentions) and
                 ('die' in content or self.has_swear(content)))
@@ -60,13 +63,15 @@ class ProfanityChecker(BaseEvent):
         return self.has_swear(self.message.content)
 
     async def respond(self):
-        await self.send_message(':x: {}'.format(self.message.author.mention))
+        await self.send_message(':x: {}'.format(self.author.mention))
         logging.info('%s (%s) swore, updated counter.', await self.user.discord_user, self.user.id)
         self.user.times_swore += 1
         self.user.save()
-        new_message = await self.bot.wait_for_message(timeout=10, author=self.message.author,
-                                                      channel=self.channel, check=self.swear_check)
-        if new_message is not None:
+        try:
+            await self.bot.wait_for('message', check=self.swear_check, timeout=10)
+        except asyncio.TimeoutError:
+            pass
+        else:
             await self.send_message('NO U. Blame <@253354364746334212> for this useless feature.')
 
 

@@ -5,12 +5,13 @@ import database
 import settings
 from handlers import event_classes, handler_classes
 
+
 database.bot = discord.Client(max_messages=1000000)
 
 @database.bot.event
 async def on_ready():
     await database.load_db()
-    await database.bot.edit_profile(user=settings.BOT_NAME)
+    await database.bot.user.edit(username=settings.BOT_NAME)
     logging.basicConfig(format=settings.LOGGER_FORMAT, filename=settings.LOGGER_FILE, level=logging.INFO)
 
     print('Logged in as')

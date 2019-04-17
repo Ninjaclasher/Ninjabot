@@ -72,7 +72,7 @@ def save_user(user):
 
 async def load_discord_user(id):
     if id not in discord_users_list.keys():
-        discord_users_list[id] = await bot.get_user_info(id)
+        discord_users_list[id] = await bot.fetch_user(id)
     return discord_users_list[id]
 
 async def load_users():

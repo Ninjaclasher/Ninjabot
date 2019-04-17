@@ -1,4 +1,3 @@
-import asyncio
 import datetime
 import logging
 import os
@@ -18,7 +17,8 @@ from util import help_list
 class Help(BaseHandler):
     async def respond(self):
         commands, arguments = zip(*help_list.items())
-        em = self.create_embed('{} help'.format(settings.BOT_NAME), 'Available commands from {}'.format(settings.BOT_NAME))
+        em = self.create_embed('{} help'.format(settings.BOT_NAME),
+                               'Available commands from {}'.format(settings.BOT_NAME))
         em.add_field(name='Command', value='\n'.join(settings.COMMAND_PREFIX + x for x in commands))
         em.add_field(name='Arguments', value='\n'.join(x or 'No Arguments' for x in arguments))
         await self.send_message(embed=em)
@@ -27,7 +27,7 @@ class Help(BaseHandler):
 @register_handler('everyone')
 class Everyone(BaseHandler):
     async def respond(self):
-        users = [user.mention for user in self.server.members if not user.bot]
+        users = [user.mention for user in self.guild.members if not user.bot]
         await self.send_message('```' + ' '.join(users) + '```')
 
 
@@ -35,7 +35,7 @@ class Everyone(BaseHandler):
 class Info(BaseHandler):
     async def respond(self):
         users = []
-        for user in self.server.members:
+        for user in self.guild.members:
             if user in self.message.mentions or len(self.message.mentions) == 0:
                 current_user = [str(user)[:20], str(user.nick)[:20]]
                 try:
@@ -93,12 +93,10 @@ class EmojiList(BaseHandler):
 class Clean(BaseHandler):
     def clean_check(self, message):
         _now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
-        return (_now - message.timestamp < datetime.timedelta(weeks=2) and
+        return (_now - message.created_at < datetime.timedelta(weeks=2) and
                 message.author == self.bot.user)
 
     async def respond(self):
-        deleted = await self.bot.purge_from(self.channel, limit=100, check=self.clean_check)
-        msg = await self.send_message(':ok_hand:')
-        logging.info('{} deleted {} messages(s) from {}({}).'.format(self.discord_user, len(deleted), self.channel, self.channel.id))
-        await asyncio.sleep(10)
-        await self.delete_message(msg)
+        deleted = await self.channel.purge(limit=100, check=self.clean_check)
+        logging.info('%s deleted %s messages(s) from %s(%s).', self.discord_user, len(deleted), self.channel, self.channel.id)
+        await self.send_message(':ok_hand:', delete_after=10)

@@ -51,7 +51,7 @@ class IllegalGIF(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
             await self.send_message('Only sentences less than 15 characters are allowed.')
             return
 
-        logging.info('Generating illegal GIF with message "{}"'.format(gif_message))
+        logging.info('Generating illegal GIF with message "%s"', gif_message)
 
         filename = sha512(gif_message.encode('utf-8')).hexdigest() + '.gif'
         filename = filename.strip()
@@ -70,8 +70,8 @@ class IllegalGIF(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
                                 ))
             t.start()
             await self.bot.loop.create_task(self.wait_generation(filename, t))
-        except:
-            logging.error('Failed to generate illegal GIF with message "{}".'.format(gif_message))
+        except Exception:
+            logging.error('Failed to generate illegal GIF with message "%s".', gif_message)
             await self.send_message('Generation of the GIF failed for an unknown reason...')
         await self.delete_message(msg)
 
@@ -90,9 +90,9 @@ class MCStatus(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
         try:
             status = server.status().raw
             
-            try:
+            if isinstance(status['description'], dict):
                 name = status['description']['text']
-            except:
+            else:
                 name = status['description']
 
             online_players = status['players']['online']
@@ -107,8 +107,7 @@ class MCStatus(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
             if online_players > 0:
                 players = list(map(itemgetter('name'), status['players']['sample']))
 
-
             em.add_field(name='Online Players ({}/{})'.format(online_players, max_players), value='\n'.join(players))
             await self.send_message(embed=em)
-        except:
+        except Exception:
             await self.send_message('Could not query the server. Please check that the address is correct.')

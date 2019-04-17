@@ -14,7 +14,8 @@ class AdminHelp(AdminRequiredMixin, BaseHandler):
     async def respond(self):
         commands, arguments = zip(*admin_help_list.items())
         
-        em = self.create_embed('{} Admin Help'.format(settings.BOT_NAME), 'Available admin commands from {}'.format(settings.BOT_NAME))
+        em = self.create_embed('{} Admin Help'.format(settings.BOT_NAME),
+                               'Available admin commands from {}'.format(settings.BOT_NAME))
         em.add_field(name='Command', value='\n'.join(settings.COMMAND_PREFIX + x for x in commands))
         em.add_field(name='Arguments', value='\n'.join(x or 'No Arguments' for x in arguments))
         await self.send_message(embed=em)
@@ -50,5 +51,6 @@ class AdminProfanity(AdminRequiredMixin, BaseHandler):
             user.times_swore = int(self.content[0])
         except (ValueError, IndexError):
             user.times_swore = 0
-        logging.info("{} updated {}'s number of times swore to {}.".format(self.discord_user, await user.discord_user, user.times_swore))
+        logging.info("{} updated {}'s number of times swore to {}.".format(self.discord_user,
+                                                                           await user.discord_user, user.times_swore))
         user.save()

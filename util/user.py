@@ -14,10 +14,10 @@ def edit_dist(a, b):
                 dp[x&1][y] = 1 + min(dp[x&1][y-1], dp[x&1^1][y], dp[x&1^1][y-1])
     return dp[len(a)&1][-1]
 
-def get_closest_user(server, content, include_bots=False):
+def get_closest_user(guild, content, include_bots=False):
     min_dis = 10**9
     user = None
-    for x in server.members:
+    for x in guild.members:
         if not x.bot or include_bots:
             names = [x.display_name.lower(), str(x).lower()]
             if x.id in settings.NAMES.keys():

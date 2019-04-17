@@ -28,6 +28,14 @@ class Wiggle(NonemptyMessageMixin, BaseHandler):
         await self.send_message('\n'.join(message))
 
 
+@register_handler('wall')
+class Wall(NonemptyMessageMixin, BaseHandler):
+    async def respond(self):
+        content = self.content_str
+        num = 2000 // len(content)
+        await self.send_message(content * num)
+
+
 @register_handler('stfu')
 class STFU(BaseHandler):
     async def respond(self):
@@ -38,7 +46,7 @@ class STFU(BaseHandler):
                 await self.send_message('BI ZUI {}'.format(' '.join(str(user.mention) for user in self.message.mentions)))
         else:
             try:
-                await self.send_message('BI ZUI {}'.format(get_closest_user(self.server, self.content_str.lower()).mention))
+                await self.send_message('BI ZUI {}'.format(get_closest_user(self.guild, self.content_str.lower()).mention))
             except AttributeError:
                 await self.send_message('There are multiple people whose names are equally similar to "{}"'.format(self.content_str))
         await self.delete_message(self.message)
@@ -88,7 +96,6 @@ class QuoteBase(BaseHandler):
             quote = quotes[idx]
         except (IndexError, ValueError):
             quote = random.choice(quotes)
-
         em = self.create_embed(self.quote_type, quote[1])
         await self.send_message(embed=em)
 
@@ -143,7 +150,7 @@ class Ping(RateLimitMixin, BaseHandler):
                 await self.send_message(self.message.mentions[0].mention)
             else:
                 try:
-                    await self.send_message(get_closest_user(self.server, self.content_str, include_bots=True).mention)
+                    await self.send_message(get_closest_user(self.guild, self.content_str, include_bots=True).mention)
                 except AttributeError:
                     await self.send_message('There are multiple people whose names are equally similar to "{}"'.format(self.content_str))
         await self.delete_message(self.message)

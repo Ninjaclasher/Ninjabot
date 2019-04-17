@@ -34,12 +34,16 @@ class BaseHandler:
         return ' '.join(self.content)
 
     @property
+    def author(self):
+        return getattr(self.message, 'author', None)
+
+    @property
     def channel(self):
         return getattr(self.message, 'channel', None)
 
     @property
-    def server(self):
-        return getattr(self.message, 'server', None)
+    def guild(self):
+        return getattr(self.message, 'guild', None)
 
     @property
     def bot(self):
@@ -49,18 +53,18 @@ class BaseHandler:
     def create_embed(cls, title=None, description=None, colour=settings.BOT_COLOUR):
         return discord.Embed(title=title, description=description, colour=colour)
 
-    async def send_message(self, content=None, embed=None):
+    async def send_message(self, content=None, embed=None, file=None, files=None, delete_after=None, nonce=None):
         if self.user.id not in settings.BANNED_USERS:
-            return await self.bot.send_message(self.channel, content=content, embed=embed)
+            return await self.channel.send(content=content, embed=embed, file=file, files=files,
+                                           delete_after=delete_after, nonce=nonce)
         return None
 
     async def send_file(self, location):
-        if self.user.id not in settings.BANNED_USERS:
-            return await self.bot.send_file(self.channel, location)
-        return None
+        return await self.send_message(file=discord.File(location))
+
 
     async def delete_message(self, message):
-        await self.bot.delete_message(message)
+        await message.delete()
 
 
 class BaseEvent(BaseHandler):
