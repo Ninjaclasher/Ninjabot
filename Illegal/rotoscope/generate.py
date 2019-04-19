@@ -5,7 +5,6 @@ import json
 import time
 import numpy as np
 from PIL import Image
-from subprocess import call
 
 # Change working directory to here
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -48,7 +47,7 @@ for frame in frames:
 
     # If it has transformations,
     # process with opencv and convert back to pillow
-    if frame['show'] == True:
+    if frame['show']:
         image = cv2.imread(filePath)
         # Do rotoscope
         image = rotoscope.rotoscope(image, textImage, frame)
@@ -66,4 +65,3 @@ frameImages[0].save(gifFile, save_all=True, append_images=frameImages, loop=0)
 timeEnd = int(time.time() * 1000)
 duration = (timeEnd - timeStart)
 print('Tooks %d' % duration)
-

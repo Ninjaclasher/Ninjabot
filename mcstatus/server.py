@@ -68,7 +68,7 @@ class MinecraftServer:
             if len(answers):
                 answer = answers[0]
                 host = str(answer).rstrip(".")
-        except Exception as e:
+        except Exception:
             pass
         for attempt in range(retries):
             try:
