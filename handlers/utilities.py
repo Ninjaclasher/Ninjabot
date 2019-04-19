@@ -46,12 +46,12 @@ class Info(BaseHandler):
 
         users.sort(key=itemgetter(-1))
         usernames, nicknames, names = zip(*users)
-        
+
         em = self.create_embed('Member Names', 'Name of server members.', colour=0xFF630A)
         em.add_field(name='Username', value='\n'.join(usernames))
         em.add_field(name='Nickname', value='\n'.join(nicknames))
         em.add_field(name='Name', value='\n'.join(names))
-        
+
         await self.send_message(embed=em)
 
 
@@ -65,7 +65,7 @@ class Bigmoji(BaseHandler):
             try:
                 emojis.append(match.group(1))
                 content = content.reaplce(match.group(0), '')
-            except:
+            except Exception:
                 break
         for emoji in emojis[:3]:
             await self.send_message('https://discordapp.com/api/emojis/{}.png'.format(emoji))
@@ -74,6 +74,7 @@ class Bigmoji(BaseHandler):
 @register_handler('emoji')
 class Emoji(NonemptyMessageMixin, BaseHandler):
     argument_name = 'emoji'
+
     async def respond(self):
         emoji = self.content_str
         try:
@@ -98,5 +99,6 @@ class Clean(BaseHandler):
 
     async def respond(self):
         deleted = await self.channel.purge(limit=100, check=self.clean_check)
-        logging.info('%s deleted %s messages(s) from %s(%s).', self.discord_user, len(deleted), self.channel, self.channel.id)
+        logging.info('%s deleted %s messages(s) from %s(%s).',
+                     self.discord_user, len(deleted), self.channel, self.channel.id)
         await self.send_message(':ok_hand:', delete_after=10)

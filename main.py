@@ -8,6 +8,7 @@ from handlers import event_classes, handler_classes
 
 database.bot = discord.Client(max_messages=1000000)
 
+
 @database.bot.event
 async def on_ready():
     await database.load_db()
@@ -19,12 +20,14 @@ async def on_ready():
     print(database.bot.user.id)
     print('------')
 
+
 async def process_command(message, content):
     # dirty way of doing this
     for i in range(len(content)):
         command = ' '.join(content[:i+1])
         if command in handler_classes.keys():
             await handler_classes[command]().dispatch(message=message, content=content[i+1:])
+
 
 @database.bot.event
 async def on_message(message):
@@ -40,6 +43,7 @@ async def on_message(message):
     if message.type == discord.MessageType.default and message.content.startswith(settings.COMMAND_PREFIX):
         stripped_message = message.content.lstrip(settings.COMMAND_PREFIX).strip().split(' ')
         await process_command(message, stripped_message)
+
 
 @database.bot.event
 async def on_message_edit(before, after):

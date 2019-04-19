@@ -1,18 +1,20 @@
 import settings
 
+
 def edit_dist(a, b):
     dp = [[0 for x in range(len(b)+1)] for y in range(2)]
     for x in range(len(a)+1):
         for y in range(len(b)+1):
             if x == 0:
-                dp[x&1][y] = y
+                dp[x & 1][y] = y
             elif y == 0:
-                dp[x&1][y] = x
-            elif a[x-1] == b[y-1]:
-                dp[x&1][y] = dp[x&1^1][y-1]
+                dp[x & 1][y] = x
+            elif a[x - 1] == b[y - 1]:
+                dp[x & 1][y] = dp[x & 1 ^ 1][y - 1]
             else:
-                dp[x&1][y] = 1 + min(dp[x&1][y-1], dp[x&1^1][y], dp[x&1^1][y-1])
-    return dp[len(a)&1][-1]
+                dp[x & 1][y] = 1 + min(dp[x & 1][y - 1], dp[x & 1 ^ 1][y], dp[x & 1 ^ 1][y - 1])
+    return dp[len(a) & 1][-1]
+
 
 def get_closest_user(guild, content, include_bots=False):
     min_dis = 10**9

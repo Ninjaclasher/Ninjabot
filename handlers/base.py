@@ -62,7 +62,6 @@ class BaseHandler:
     async def send_file(self, location):
         return await self.send_message(file=discord.File(location))
 
-
     async def delete_message(self, message):
         await message.delete()
 

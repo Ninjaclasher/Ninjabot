@@ -1,3 +1,5 @@
+import os
+
 COMMAND_PREFIX = '^'
 TOKEN = ''
 BOT_NAME = 'Ninjabot'
@@ -24,10 +26,8 @@ UNBANNED_WORDS = []
 
 NAMES = {}
 
-import os
 try:
     with open(os.path.join(os.path.dirname(__file__), 'local_settings.py')) as f:
         exec(f.read()) in globals()
 except IOError:
     pass
-

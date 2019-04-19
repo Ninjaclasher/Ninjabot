@@ -37,16 +37,16 @@ class Minesweeper(BaseHandler):
                         if 0 <= x+xx < height and 0 <= y+yy < length and grid[x+xx][y+yy] is None:
                             grid[x][y] += 1
         emoji_convert = {
-            None : 'bomb',
-            0 : 'zero',
-            1 : 'one',
-            2 : 'two',
-            3 : 'three',
-            4 : 'four',
-            5 : 'five',
-            6 : 'six',
-            7 : 'seven',
-            8 : 'eight',
+            None: 'bomb',
+            0: 'zero',
+            1: 'one',
+            2: 'two',
+            3: 'three',
+            4: 'four',
+            5: 'five',
+            6: 'six',
+            7: 'seven',
+            8: 'eight',
         }
         msg = [':arrow_down_small:' * length]
         for x in range(height):
@@ -55,4 +55,3 @@ class Minesweeper(BaseHandler):
                 msg[-1] += '||:{}:||'.format(emoji_convert[grid[x][y]])
         msg.append(':arrow_up_small:' * length)
         await self.send_message('\n'.join(msg))
-

@@ -1,6 +1,7 @@
 handler_classes = {}
 event_classes = {}
 
+
 def register_handler(command):
     def register_class(handler_class):
         assert command not in handler_classes
@@ -8,6 +9,7 @@ def register_handler(command):
         return handler_class
 
     return register_class
+
 
 def register_event(name):
     def register_class(event_class):

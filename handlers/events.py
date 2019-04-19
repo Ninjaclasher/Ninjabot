@@ -2,7 +2,7 @@ import asyncio
 import logging
 import random
 
-from handlers.base import BaseEvent 
+from handlers.base import BaseEvent
 from handlers.registry import register_event
 
 import settings
@@ -27,7 +27,7 @@ class ReactionAdder(BaseEvent):
     async def respond(self):
         try:
             await self.message.add_reaction(random.choice(self.guild.emojis))
-        except:
+        except Exception:
             logging.warn("Failed to add a reaction to %s (%s)'s message.", self.author, self.author.id)
         else:
             logging.info("Added a reaction to %s (%s)'s message.", self.author, self.author.id)
@@ -82,4 +82,3 @@ class AwakeTimeUpdater(BaseEvent):
 
     async def respond(self):
         self.user.update_awake_time()
-

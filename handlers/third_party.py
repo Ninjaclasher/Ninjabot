@@ -44,7 +44,7 @@ class IllegalGIF(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
             match = re.search('<(:[A-Z]+:)[0-9]+>', gif_message)
             try:
                 gif_message = gif_message.replace(match.group(0), match.group(1))
-            except:
+            except Exception:
                 break
 
         if len(gif_message) >= 15:
@@ -61,13 +61,12 @@ class IllegalGIF(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
             return
         msg = await self.send_message(self.discord_user.mention + ', please wait while the GIF is generated.')
         try:
-            command = 'cd {directory} && python3 rotoscope/generate.py "{content}" GIF/Trump/ "../illegal_gifs/{filename}"'
+            command = 'cd {directory} && python3 rotoscope/generate.py "{content}" ' \
+                      'GIF/Trump/ "../illegal_gifs/{filename}"'
             t = threading.Thread(target=os.system,
                                  args=(command.format(directory=settings.ILLEGAL_DIR,
                                                       content=self.escape(gif_message),
-                                                      filename=filename
-                                                     ),
-                                ))
+                                                      filename=filename),))
             t.start()
             await self.bot.loop.create_task(self.wait_generation(filename, t))
         except Exception:
@@ -82,14 +81,14 @@ Source: https://github.com/Dinnerbone/mcstatus
 @register_handler('mcstatus')
 class MCStatus(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
     argument_name = 'address'
-    
+
     async def respond(self):
         address = self.content[0].strip()
         server = MinecraftServer.lookup(address)
         logging.info('Querying minecraft server with IP {}.'.format(address))
         try:
             status = server.status().raw
-            
+
             if isinstance(status['description'], dict):
                 name = status['description']['text']
             else:

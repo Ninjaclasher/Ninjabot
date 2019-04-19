@@ -5,8 +5,10 @@ import database
 
 EPOCH = datetime.datetime(1970, 1, 1)
 
+
 class User:
-    def __init__(self, id, username='', times_swore=0, awake_time_start=EPOCH, awake_time_current=EPOCH, max_awake_time=0.0):
+    def __init__(self, id, username='', times_swore=0, awake_time_start=EPOCH,
+                 awake_time_current=EPOCH, max_awake_time=0.0):
         self.id = id
         self.username = username
         self.rate_limit = defaultdict(lambda: 0.0)
@@ -23,8 +25,9 @@ class User:
 
     @property
     def db_save(self):
-        return self.id, self.username, self.times_swore, self.awake_time_start, self.awake_time_current, self.max_awake_time
-    
+        return (self.id, self.username, self.times_swore, self.awake_time_start,
+                self.awake_time_current, self.max_awake_time)
+
     @property
     def awake(self):
         return (datetime.datetime.now()-self.awake_time_current).total_seconds() <= 3600
@@ -36,7 +39,7 @@ class User:
     def reset_awake_time(self, new_value=EPOCH):
         self.awake_time_start = new_value
         self.awake_time_current = new_value
-    
+
     def update_awake_time(self):
         _now = datetime.datetime.now()
         if not self.awake:

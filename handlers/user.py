@@ -34,7 +34,7 @@ class RankingBase(BaseHandler):
 
     async def get_display_row(self, obj):
         raise NotImplementedError()
-    
+
     async def get_title(self):
         return ''
 

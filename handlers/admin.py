@@ -13,13 +13,13 @@ from util import admin_help_list
 class AdminHelp(AdminRequiredMixin, BaseHandler):
     async def respond(self):
         commands, arguments = zip(*admin_help_list.items())
-        
+
         em = self.create_embed('{} Admin Help'.format(settings.BOT_NAME),
                                'Available admin commands from {}'.format(settings.BOT_NAME))
         em.add_field(name='Command', value='\n'.join(settings.COMMAND_PREFIX + x for x in commands))
         em.add_field(name='Arguments', value='\n'.join(x or 'No Arguments' for x in arguments))
         await self.send_message(embed=em)
-    
+
 
 class AdminQuoteBase(AdminRequiredMixin, NonemptyMessageMixin, BaseHandler):
     argument_name = 'quote'

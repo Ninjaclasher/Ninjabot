@@ -12,6 +12,7 @@ class AdminRequiredMixin:
 
 class NonemptyMessageMixin:
     argument_name = 'message'
+
     async def initialize(self):
         if len(self.content) == 0:
             await self.send_message('Please enter a(n) {}.'.format(self.argument_name))
@@ -21,6 +22,7 @@ class NonemptyMessageMixin:
 
 class RateLimitMixin:
     limit_seconds = 5
+
     async def initialize(self):
         _now = time.time()
         if _now - self.user.rate_limit[self.__class__] < self.limit_seconds:

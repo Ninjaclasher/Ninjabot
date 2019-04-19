@@ -14,7 +14,8 @@ loading = True
 
 class DatabaseManager:
     def __init__(self):
-        self.db = pymysql.connect(settings.MYSQL_HOST, settings.MYSQL_USER, settings.MYSQL_PASSWD, settings.MYSQL_DATABASE)
+        self.db = pymysql.connect(settings.MYSQL_HOST, settings.MYSQL_USER,
+                                  settings.MYSQL_PASSWD, settings.MYSQL_DATABASE)
         self.lock = defaultdict(lambda: threading.RLock())
 
     @classmethod
@@ -55,13 +56,17 @@ class DatabaseManager:
             )
             self.db.commit()
 
+
 mgr = DatabaseManager()
+
 
 def get_quote(typ):
     return mgr.select('ninjabot_quote', 'type = %s', (typ,))
 
+
 def add_quote(quote, typ):
     mgr.insert('ninjabot_quote', values=(None, quote, typ))
+
 
 def save_user(user):
     mgr.update('ninjabot_user', user.id, 'username', user.username)
@@ -70,15 +75,18 @@ def save_user(user):
     mgr.update('ninjabot_user', user.id, 'awake_time_current', user.awake_time_current)
     mgr.update('ninjabot_user', user.id, 'max_awake_time', user.max_awake_time)
 
+
 async def load_discord_user(id):
     if id not in discord_users_list.keys():
         discord_users_list[id] = await bot.fetch_user(id)
     return discord_users_list[id]
 
+
 async def load_users():
     from models import User
     for x in mgr.select('ninjabot_user'):
         users[x[0]] = User(*x)
+
 
 async def load_user(id):
     global users
@@ -88,8 +96,8 @@ async def load_user(id):
         mgr.insert('ninjabot_user', users[id].db_save)
     return users[id]
 
+
 async def load_db():
     global loading
     await load_users()
     loading = False
-
