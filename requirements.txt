@@ -1,2 +1,7 @@
 discord>0.16.12
 pymysql
+opencv-python
+numpy
+PIL
+six
+dnspython
