@@ -5,3 +5,4 @@ numpy
 PIL
 six
 dnspython
+requests

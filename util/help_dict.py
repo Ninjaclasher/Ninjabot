@@ -10,6 +10,7 @@ help_list = {
         'help': '',
         'illegal': '(message)',
         'info': '[users]',
+        'inspire': '',
         'letter': '(message)',
         'mcstatus': '(ip address:port)',
         'minesweeper': '[height] [length]',

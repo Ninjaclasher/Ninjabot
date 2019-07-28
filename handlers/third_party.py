@@ -2,6 +2,7 @@ import asyncio
 import logging
 import os
 import re
+import requests
 import threading
 
 from hashlib import sha512
@@ -110,3 +111,11 @@ class MCStatus(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
             await self.send_message(embed=em)
         except Exception:
             await self.send_message('Could not query the server. Please check that the address is correct.')
+
+
+@register_handler('inspire')
+class Inspire(RateLimitMixin, BaseHandler):
+    limit_seconds = 1
+
+    async def respond(self):
+        await self.send_message(requests.get('http://inspirobot.me/api?generate=true').text)
