@@ -68,7 +68,7 @@ class Bigmoji(BaseHandler):
             except Exception:
                 break
         for emoji in emojis[:3]:
-            await self.send_message('https://discordapp.com/api/emojis/{}.png'.format(emoji))
+            await self.send_message('https://cdn.discordapp.com/emojis/{}.png'.format(emoji))
 
 
 @register_handler('emoji')
