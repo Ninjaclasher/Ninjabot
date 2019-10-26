@@ -26,7 +26,13 @@ class DatabaseManager:
     def parse_args(cls, *args):
         return tuple(x for x in args if x is not None)
 
+    def reconnect(self):
+        self.db.close()
+        self.db = pymysql.connect(settings.MYSQL_HOST, settings.MYSQL_USER,
+                                  settings.MYSQL_PASSWD, settings.MYSQL_DATABASE)
+
     def insert(self, table, values):
+        self.reconnect()
         with self.lock['read'] and self.lock['write'], self.db.cursor() as cursor:
             cursor.execute("""\
                 INSERT INTO {0} VALUES ({1})
@@ -36,6 +42,7 @@ class DatabaseManager:
             return cursor.lastrowid
 
     def select(self, table, where_condition='', values=(), extra=''):
+        self.reconnect()
         with self.lock['read'], self.db.cursor() as cursor:
             cursor.execute("""\
                 SELECT *
@@ -47,6 +54,7 @@ class DatabaseManager:
             return cursor.fetchall()
 
     def update(self, table, id, field, value):
+        self.reconnect()
         with self.lock['read'] and self.lock['write'], self.db.cursor() as cursor:
             cursor.execute("""\
                 UPDATE {0}
