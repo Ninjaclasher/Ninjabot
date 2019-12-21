@@ -86,7 +86,7 @@ class MCStatus(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
     async def respond(self):
         address = self.content[0].strip()
         server = MinecraftServer.lookup(address)
-        logging.info('Querying minecraft server with IP {}.'.format(address))
+        logging.info('Querying minecraft server with IP %s.', address)
         try:
             status = server.status().raw
 
@@ -99,7 +99,8 @@ class MCStatus(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
             max_players = status['players']['max']
 
             em = self.create_embed('Minecraft Server Status', 'Server query to {}'.format(address), colour=0xFF630A)
-            em.add_field(name='Name', value=name)
+            if name:
+                em.add_field(name='Name', value=name)
             em.add_field(name='Version', value=status['version']['name'])
             em.add_field(name='Ping', value=str(server.ping()))
 
@@ -109,7 +110,8 @@ class MCStatus(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
 
             em.add_field(name='Online Players ({}/{})'.format(online_players, max_players), value='\n'.join(players))
             await self.send_message(embed=em)
-        except Exception:
+        except Exception as e:
+            logging.warn('Failed to query %s. %s', address, e)
             await self.send_message('Could not query the server. Please check that the address is correct.')
 
 
