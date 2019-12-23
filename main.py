@@ -51,9 +51,14 @@ async def on_message_edit(before, after):
         await event().dispatch(message=after, content=after.content.split(), before=before)
 
 
-try:
-    database.bot.loop.run_until_complete(database.bot.start(settings.TOKEN))
-except KeyboardInterrupt:
-    database.bot.loop.run_until_complete(database.bot.logout())
-finally:
-    database.bot.loop.close()
+def run_bot():
+    try:
+        database.bot.loop.run_until_complete(database.bot.start(settings.TOKEN))
+    except KeyboardInterrupt:
+        database.bot.loop.run_until_complete(database.bot.logout())
+    finally:
+        database.bot.loop.close()
+
+
+if __name__ == '__main__':
+    run_bot()
