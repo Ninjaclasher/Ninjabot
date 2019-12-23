@@ -2,7 +2,7 @@ discord>0.16.12
 pymysql
 opencv-python
 numpy
-PIL
+Pillow
 six
 dnspython
 requests
