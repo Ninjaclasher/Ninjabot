@@ -7,6 +7,8 @@ EPOCH = datetime.datetime(1970, 1, 1)
 
 
 class User:
+    db_fields = ('id', 'username', 'times_swore', 'awake_time_start', 'awake_time_current', 'max_awake_time')
+
     def __init__(self, id, username='', times_swore=0, awake_time_start=EPOCH,
                  awake_time_current=EPOCH, max_awake_time=0.0):
         self.id = id
@@ -25,8 +27,7 @@ class User:
 
     @property
     def db_save(self):
-        return (self.id, self.username, self.times_swore, self.awake_time_start,
-                self.awake_time_current, self.max_awake_time)
+        return tuple(getattr(self, field) for field in self.db_fields)
 
     @property
     def awake(self):

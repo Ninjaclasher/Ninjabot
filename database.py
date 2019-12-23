@@ -77,11 +77,9 @@ def add_quote(quote, typ):
 
 
 def save_user(user):
-    mgr.update('ninjabot_user', user.id, 'username', user.username)
-    mgr.update('ninjabot_user', user.id, 'times_swore', user.times_swore)
-    mgr.update('ninjabot_user', user.id, 'awake_time_start', user.awake_time_start)
-    mgr.update('ninjabot_user', user.id, 'awake_time_current', user.awake_time_current)
-    mgr.update('ninjabot_user', user.id, 'max_awake_time', user.max_awake_time)
+    for field in user.db_fields:
+        if field != 'id':
+            mgr.update('ninjabot_user', user.id, field, getattr(user, field))
 
 
 async def load_discord_user(id):
