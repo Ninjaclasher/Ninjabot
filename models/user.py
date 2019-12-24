@@ -15,8 +15,10 @@ class User:
         self.username = username
         self.rate_limit = defaultdict(lambda: 0.0)
         self.times_swore = times_swore
-        self.awake_time_start = EPOCH if type(awake_time_start) == str else awake_time_start
-        self.awake_time_current = EPOCH if type(awake_time_current) == str else awake_time_current
+        self.awake_time_start = EPOCH if type(awake_time_start) == str else \
+            awake_time_start.replace(tzinfo=timezone.utc)
+        self.awake_time_current = EPOCH if type(awake_time_current) == str else \
+            awake_time_current.replace(tzinfo=timezone.utc)
         self.max_awake_time = max_awake_time
 
     def __eq__(self, other):

@@ -13,8 +13,8 @@ database.bot = discord.Client(max_messages=1000000)
 async def on_ready():
     await database.load_db()
     await database.bot.user.edit(username=settings.BOT_NAME)
-    logging.getLogger('ninjabot.handler').basicConfig(format=settings.LOGGER_FORMAT,
-                                                      filename=settings.LOGGER_FILE, level=logging.INFO)
+    logging.basicConfig(format=settings.LOGGER_FORMAT,
+                        filename=settings.LOGGER_FILE, level=logging.INFO)
 
     print('Logged in as')
     print(database.bot.user.name)
