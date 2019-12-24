@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 import database
 
-EPOCH = datetime.datetime(1970, 1, 1, tzinfo=timezone.utc)
+EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 
 
 class User:
