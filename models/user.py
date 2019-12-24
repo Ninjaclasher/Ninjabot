@@ -1,9 +1,9 @@
 from collections import defaultdict
-import datetime
+from datetime import datetime, timezone
 
 import database
 
-EPOCH = datetime.datetime(1970, 1, 1)
+EPOCH = datetime.datetime(1970, 1, 1, tzinfo=timezone.utc)
 
 
 class User:
@@ -31,7 +31,7 @@ class User:
 
     @property
     def awake(self):
-        return (datetime.datetime.now()-self.awake_time_current).total_seconds() <= 3600
+        return (datetime.now(timezone.utc)-self.awake_time_current).total_seconds() <= 3600
 
     @property
     def awake_time(self):
@@ -42,7 +42,7 @@ class User:
         self.awake_time_current = new_value
 
     def update_awake_time(self):
-        _now = datetime.datetime.now()
+        _now = datetime.now(timezone.utc)
         if not self.awake:
             self.reset_awake_time(new_value=_now)
         else:
