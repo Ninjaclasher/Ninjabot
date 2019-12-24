@@ -16,6 +16,9 @@ import settings
 from mcstatus import MinecraftServer
 
 
+logger = logging.getLogger('ninjabot.handler')
+
+
 """
 Source: https://github.com/ivanseidel/Is-Now-Illegal
 """
@@ -52,12 +55,12 @@ class IllegalGIF(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
             await self.send_message('Only sentences less than 15 characters are allowed.')
             return
 
-        logging.info('Generating illegal GIF with message "%s"', gif_message)
+        logger.info('Generating illegal GIF with message "%s"', gif_message)
 
         filename = sha512(gif_message.encode('utf-8')).hexdigest() + '.gif'
         filename = filename.strip()
         if self.has_file(filename):
-            logging.info('Illegal GIF with message "{}" already exists. Sending and returning.'.format(gif_message))
+            logger.info('Illegal GIF with message "%s" already exists. Sending and returning.', gif_message)
             await self.bot.loop.create_task(self.wait_generation(filename))
             return
         msg = await self.send_message(self.discord_user.mention + ', please wait while the GIF is generated.')
@@ -71,7 +74,7 @@ class IllegalGIF(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
             t.start()
             await self.bot.loop.create_task(self.wait_generation(filename, t))
         except Exception:
-            logging.error('Failed to generate illegal GIF with message "%s".', gif_message)
+            logger.error('Failed to generate illegal GIF with message "%s".', gif_message)
             await self.send_message('Generation of the GIF failed for an unknown reason...')
         await self.delete_message(msg)
 
@@ -86,7 +89,7 @@ class MCStatus(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
     async def respond(self):
         address = self.content[0].strip()
         server = MinecraftServer.lookup(address)
-        logging.info('Querying minecraft server with IP %s.', address)
+        logger.info('Querying minecraft server with IP %s.', address)
         try:
             status = server.status().raw
 
@@ -111,7 +114,7 @@ class MCStatus(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
             em.add_field(name='Online Players ({}/{})'.format(online_players, max_players), value='\n'.join(players))
             await self.send_message(embed=em)
         except Exception as e:
-            logging.warn('Failed to query %s. %s', address, e)
+            logger.warn('Failed to query %s. %s', address, e)
             await self.send_message('Could not query the server. Please check that the address is correct.')
 
 

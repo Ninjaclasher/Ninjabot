@@ -9,6 +9,9 @@ import settings
 from util import admin_help_list
 
 
+logger = logging.getLogger('ninjabot.handler')
+
+
 @register_handler('adminhelp')
 class AdminHelp(AdminRequiredMixin, BaseHandler):
     async def respond(self):
@@ -51,6 +54,6 @@ class AdminProfanity(AdminRequiredMixin, BaseHandler):
             user.times_swore = int(self.content[0])
         except (ValueError, IndexError):
             user.times_swore = 0
-        logging.info("{} updated {}'s number of times swore to {}.".format(self.discord_user,
-                                                                           await user.discord_user, user.times_swore))
+        logger.info("%s updated %s's number of times swore to %s.",
+                    self.discord_user, await user.discord_user, user.times_swore)
         user.save()

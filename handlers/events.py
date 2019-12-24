@@ -8,6 +8,9 @@ from handlers.registry import register_event
 import settings
 
 
+logger = logging.getLogger('ninjabot.handler')
+
+
 @register_event('server_leaver')
 class ServerLeaver(BaseEvent):
     async def trigger(self):
@@ -15,7 +18,7 @@ class ServerLeaver(BaseEvent):
 
     async def respond(self):
         if self.guild.id not in settings.WHITELISTED_SERVERS:
-            logging.warn('Left server %s with id %s.', self.guild.name, self.guild.id)
+            logger.warn('Left server %s with id %s.', self.guild.name, self.guild.id)
             await self.guild.leave()
 
 
@@ -28,9 +31,9 @@ class ReactionAdder(BaseEvent):
         try:
             await self.message.add_reaction(random.choice(self.guild.emojis))
         except Exception:
-            logging.warn("Failed to add a reaction to %s (%s)'s message.", self.author, self.author.id)
+            logger.warn("Failed to add a reaction to %s (%s)'s message.", self.author, self.author.id)
         else:
-            logging.info("Added a reaction to %s (%s)'s message.", self.author, self.author.id)
+            logger.info("Added a reaction to %s (%s)'s message.", self.author, self.author.id)
 
 
 @register_event('profanity_checker')
@@ -64,7 +67,7 @@ class ProfanityChecker(BaseEvent):
 
     async def respond(self):
         await self.send_message(':x: {}'.format(self.author.mention))
-        logging.info('%s (%s) swore, updated counter.', await self.user.discord_user, self.user.id)
+        logger.info('%s (%s) swore, updated counter.', await self.user.discord_user, self.user.id)
         self.user.times_swore += 1
         self.user.save()
         try:

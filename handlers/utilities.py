@@ -13,6 +13,9 @@ import settings
 from util import help_list
 
 
+logger = logging.getLogger('ninjabot.handler')
+
+
 @register_handler('help')
 class Help(BaseHandler):
     async def respond(self):
@@ -99,6 +102,6 @@ class Clean(BaseHandler):
 
     async def respond(self):
         deleted = await self.channel.purge(limit=100, check=self.clean_check)
-        logging.info('%s deleted %s messages(s) from %s(%s).',
-                     self.discord_user, len(deleted), self.channel, self.channel.id)
+        logger.info('%s deleted %s messages(s) from %s(%s).',
+                    self.discord_user, len(deleted), self.channel, self.channel.id)
         await self.send_message(':ok_hand:', delete_after=10)
