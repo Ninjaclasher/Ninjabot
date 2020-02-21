@@ -32,3 +32,31 @@ class RateLimitMixin:
         self.user.rate_limit[self.__class__] = _now
 
         await super(RateLimitMixin, self).initialize()
+
+
+class Paginator:
+    def __init__(self, page, num_pages, queryset):
+        self.page = page
+        self.num_pages = num_pages
+        self.queryset = queryset
+
+
+class PaginatedMixin:
+    paginate_by = 10
+
+    async def get_queryset(self):
+        raise NotImplementedError()
+
+    async def get_paginator(self):
+        queryset = await self.get_queryset()
+
+        num_pages = (len(queryset) + self.paginate_by - 1) // self.paginate_by
+
+        try:
+            page = int(self.content[0])
+            if not 1 <= page <= num_pages:
+                raise IndexError
+        except (ValueError, IndexError):
+            page = 1
+
+        return Paginator(page, num_pages, queryset[self.paginate_by * (page - 1): self.paginate_by * page])
