@@ -6,7 +6,7 @@ import re
 from operator import itemgetter
 
 from handlers.base import BaseHandler
-from handlers.mixins import NonemptyMessageMixin
+from handlers.mixins import NonemptyMessageMixin, PaginatedMixin
 from handlers.registry import register_handler
 
 import settings
@@ -35,25 +35,32 @@ class Everyone(BaseHandler):
 
 
 @register_handler('info')
-class Info(BaseHandler):
-    async def respond(self):
+class Info(PaginatedMixin, BaseHandler):
+    paginate_by = 40
+
+    async def get_queryset(self):
         users = []
         for user in self.guild.members:
             if user in self.message.mentions or len(self.message.mentions) == 0:
-                current_user = [str(user)[:20], str(user.nick)[:20]]
+                current_user = [user.mention]
                 try:
                     current_user.append(settings.NAMES[user.id])
                 except KeyError:
                     current_user.append('Unknown')
                 users.append(current_user)
-
         users.sort(key=itemgetter(-1))
-        usernames, nicknames, names = zip(*users)
+
+        return users
+
+    async def respond(self):
+        paginator = await self.get_paginator()
+
+        mentions, names = zip(*paginator.queryset)
 
         em = self.create_embed('Member Names', 'Name of server members.', colour=0xFF630A)
-        em.add_field(name='Username', value='\n'.join(usernames))
-        em.add_field(name='Nickname', value='\n'.join(nicknames))
+        em.add_field(name='User', value='\n'.join(mentions))
         em.add_field(name='Name', value='\n'.join(names))
+        em.set_footer(text='Page {}/{}'.format(paginator.page, paginator.num_pages))
 
         await self.send_message(embed=em)
 
