@@ -30,6 +30,7 @@ class AdminQuoteBase(AdminRequiredMixin, NonemptyMessageMixin, BaseHandler):
 
     async def respond(self):
         database.add_quote(' '.join(self.content), len(self.quote_type) - 1)
+        logger.info('%s added the quote "%s"', self.discord_user, ' '.join(self.content))
         await self.send_message('{} quote added!'.format(self.quote_type))
 
 

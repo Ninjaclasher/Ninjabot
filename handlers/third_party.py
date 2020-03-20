@@ -58,7 +58,6 @@ class IllegalGIF(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
         logger.info('Generating illegal GIF with message "%s"', gif_message)
 
         filename = sha512(gif_message.encode('utf-8')).hexdigest() + '.gif'
-        filename = filename.strip()
         if self.has_file(filename):
             logger.info('Illegal GIF with message "%s" already exists. Sending and returning.', gif_message)
             await self.bot.loop.create_task(self.wait_generation(filename))
