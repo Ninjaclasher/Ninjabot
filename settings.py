@@ -24,6 +24,10 @@ SWEAR_WORDS = []
 SPECIAL_SWEAR_WORDS = []
 UNBANNED_WORDS = []
 
+# Valid types: message, react, none
+SWEAR_DEFAULT_TYPE = 'message'
+SWEAR_USER_CUSTOM_TYPE = {}
+
 NAMES = {}
 
 try:

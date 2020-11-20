@@ -65,8 +65,15 @@ class ProfanityChecker(BaseEvent):
             return False
         return self.has_swear(self.message.content)
 
+    async def create_response(self):
+        response_type = settings.SWEAR_USER_CUSTOM_TYPE.get(self.user.id, settings.SWEAR_DEFAULT_TYPE)
+        if response_type == 'message':
+            await self.send_message(':x: {}'.format(self.author.mention))
+        elif response_type == 'react':
+            await self.message.add_reaction('\u274c')
+
     async def respond(self):
-        await self.send_message(':x: {}'.format(self.author.mention))
+        await self.create_response()
         logger.info('%s (%s) swore, updated counter.', await self.user.discord_user, self.user.id)
         self.user.times_swore += 1
         self.user.save()
