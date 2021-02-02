@@ -14,8 +14,8 @@ loading = True
 
 class DatabaseManager:
     def __init__(self):
-        self.db = pymysql.connect(settings.MYSQL_HOST, settings.MYSQL_USER,
-                                  settings.MYSQL_PASSWD, settings.MYSQL_DATABASE)
+        self.db = pymysql.connect(host=settings.MYSQL_HOST, user=settings.MYSQL_USER,
+                                  password=settings.MYSQL_PASSWD, database=settings.MYSQL_DATABASE)
         self.lock = defaultdict(lambda: threading.RLock())
 
     @classmethod
@@ -28,8 +28,8 @@ class DatabaseManager:
 
     def reconnect(self):
         self.db.close()
-        self.db = pymysql.connect(settings.MYSQL_HOST, settings.MYSQL_USER,
-                                  settings.MYSQL_PASSWD, settings.MYSQL_DATABASE)
+        self.db = pymysql.connect(host=settings.MYSQL_HOST, user=settings.MYSQL_USER,
+                                  password=settings.MYSQL_PASSWD, database=settings.MYSQL_DATABASE)
 
     def insert(self, table, values):
         self.reconnect()
