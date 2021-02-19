@@ -48,8 +48,11 @@ async def on_message(message):
 
 @database.bot.event
 async def on_message_edit(before, after):
+    if after.author.bot or database.loading:
+        return
+
     for name, event in event_classes.items():
-        await event().dispatch(message=after, content=after.content.split(), before=before)
+        await event().dispatch(message=after, content=after.content.split(' '), before=before)
 
 
 def run_bot():
