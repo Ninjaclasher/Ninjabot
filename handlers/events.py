@@ -2,6 +2,8 @@ import asyncio
 import logging
 import random
 
+from functools import cached_property
+
 from handlers.base import BaseEvent
 from handlers.registry import register_event
 
@@ -65,11 +67,20 @@ class ProfanityChecker(BaseEvent):
             return False
         return self.has_swear(self.message.content)
 
+    @cached_property
+    def response_type(self):
+        return settings.SWEAR_USER_CUSTOM_TYPE.get(
+            self.user.id,
+            settings.SWEAR_GUILD_CUSTOM_TYPE.get(
+                self.guild.id,
+                settings.SWEAR_DEFAULT_TYPE,
+            ),
+        )
+
     async def create_response(self):
-        response_type = settings.SWEAR_USER_CUSTOM_TYPE.get(self.user.id, settings.SWEAR_DEFAULT_TYPE)
-        if response_type == 'message':
+        if self.response_type == 'message':
             await self.send_message(':x: {}'.format(self.author.mention))
-        elif response_type == 'react':
+        elif self.response_type == 'react':
             await self.message.add_reaction('\u274c')
 
     async def respond(self):
@@ -77,6 +88,8 @@ class ProfanityChecker(BaseEvent):
         logger.info('%s (%s) swore, updated counter.', await self.user.discord_user, self.user.id)
         self.user.times_swore += 1
         self.user.save()
+        if self.response_type == 'none':
+            return
         try:
             await self.bot.wait_for('message', check=self.swear_check, timeout=10)
         except asyncio.TimeoutError:

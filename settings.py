@@ -26,6 +26,7 @@ UNBANNED_WORDS = []
 
 # Valid types: message, react, none
 SWEAR_DEFAULT_TYPE = 'message'
+SWEAR_GUILD_CUSTOM_TYPE = {}
 SWEAR_USER_CUSTOM_TYPE = {}
 
 NAMES = {}
