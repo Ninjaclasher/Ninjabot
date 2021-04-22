@@ -20,6 +20,7 @@ CREATE TABLE `ninjabot_quote` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `quote` longtext,
   `type` int(11) DEFAULT NULL,
+  `guild` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=146 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;

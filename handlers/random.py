@@ -96,7 +96,11 @@ class QuoteBase(BaseHandler):
     quote_type = ''
 
     async def respond(self):
-        quotes = database.get_quote(len(self.quote_type)-1)
+        quotes = database.get_quote(len(self.quote_type) - 1, self.guild.id)
+        if len(quotes) == 0:
+            await self.send_message('No {} quotes available!'.format(self.quote_type))
+            return
+
         try:
             idx = int(self.content[0])
             quote = quotes[idx]

@@ -68,12 +68,12 @@ class DatabaseManager:
 mgr = DatabaseManager()
 
 
-def get_quote(typ):
-    return mgr.select('ninjabot_quote', 'type = %s', (typ,))
+def get_quote(typ, guild):
+    return mgr.select('ninjabot_quote', 'type = %s AND guild = %s', (typ, guild))
 
 
-def add_quote(quote, typ):
-    mgr.insert('ninjabot_quote', values=(None, quote, typ))
+def add_quote(quote, typ, guild):
+    mgr.insert('ninjabot_quote', values=(None, quote, typ, guild))
 
 
 def save_user(user):

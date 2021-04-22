@@ -18,7 +18,7 @@ class ServerLeaver(BaseEvent):
 
     async def respond(self):
         if self.guild.id not in settings.WHITELISTED_SERVERS:
-            logger.warn('Left server %s with id %s.', self.guild.name, self.guild.id)
+            logger.warn('Left guild %s with id %s.', self.guild.name, self.guild.id)
             await self.guild.leave()
 
 
