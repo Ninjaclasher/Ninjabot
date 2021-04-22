@@ -6,7 +6,9 @@ import settings
 from handlers import event_classes, handler_classes
 
 
-database.bot = discord.Client(max_messages=1000000)
+intents = discord.Intents.default()
+intents.members = True
+database.bot = discord.Client(max_messages=1000000, intents=intents
 
 
 @database.bot.event
