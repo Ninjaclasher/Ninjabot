@@ -21,7 +21,7 @@ def get_closest_user(guild, content, include_bots=False):
     user = None
     for x in guild.members:
         if not x.bot or include_bots:
-            names = [x.display_name.lower(), str(x).lower()]
+            names = [x.display_name.lower(), str(x).lower(), str(x.id)]
             if x.id in settings.NAMES.keys():
                 names.append(settings.NAMES[x.id])
             dis = min(edit_dist(content, x) for x in names)

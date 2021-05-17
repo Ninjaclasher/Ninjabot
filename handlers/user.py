@@ -1,5 +1,6 @@
 from handlers.base import BaseHandler
 from handlers.registry import register_handler
+from util import get_closest_user
 
 import database
 
@@ -7,12 +8,20 @@ import database
 @register_handler('user')
 class UserInfo(BaseHandler):
     async def respond(self):
-        try:
-            user = await database.load_user(self.message.mentions[0].id)
-        except IndexError:
+        if len(self.content_str.strip()) == 0:
             user = self.user
+        elif len(self.message.mentions) == 1:
+            user = await database.load_user(self.message.mentions[0].id)
         else:
-            user.update_awake_time()
+            user = get_closest_user(self.guild, self.content_str.lower(), include_bots=True)
+            if user is not None:
+                user = await database.load_user(user.id)
+            else:
+                await self.send_message('There are multiple people whose names are '
+                                        'equally similar to "{}"'.format(self.content_str))
+                return
+
+        user.update_awake_time()
 
         em = self.create_embed('{} Info'.format(await user.discord_user))
         em.add_field(name='Times Swore', value='{}'.format(user.times_swore))
