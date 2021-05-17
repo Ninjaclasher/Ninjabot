@@ -54,9 +54,7 @@ class RankingBase(BaseHandler):
             await self.send_message(self.empty_queryset_message)
             return
 
-        em = self.create_embed()
-        em.add_field(name=await self.get_title(), value='\n'.join(queryset))
-        await self.send_message(embed=em)
+        await self.send_message(embed=self.create_embed(await self.get_title(), '\n'.join(queryset)))
 
 
 @register_handler('awakelb')

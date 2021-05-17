@@ -50,7 +50,7 @@ class BaseHandler:
         return database.bot
 
     @classmethod
-    def create_embed(cls, title=None, description=None, colour=settings.BOT_COLOUR):
+    def create_embed(cls, title='', description='', colour=settings.BOT_COLOUR):
         return discord.Embed(title=title, description=description, colour=colour)
 
     async def send_message(self, content=None, embed=None, file=None, files=None, delete_after=None, nonce=None):
