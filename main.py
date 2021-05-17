@@ -61,7 +61,7 @@ def run_bot():
     try:
         database.bot.loop.run_until_complete(database.bot.start(settings.TOKEN))
     except KeyboardInterrupt:
-        database.bot.loop.run_until_complete(database.bot.logout())
+        database.bot.loop.run_until_complete(database.bot.close())
     finally:
         database.bot.loop.close()
 
