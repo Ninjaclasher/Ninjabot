@@ -1,8 +1,9 @@
 import asyncio
 import logging
 import random
+import re
 
-from functools import cached_property
+from functools import cached_property, partial
 
 from handlers.base import BaseEvent
 from handlers.registry import register_event
@@ -40,16 +41,22 @@ class ReactionAdder(BaseEvent):
 
 @register_event('profanity_checker')
 class ProfanityChecker(BaseEvent):
+    deduplicate = partial(re.compile(r'(.)\1+').sub, r'\1')
+
     @classmethod
     def has_swear(cls, content):
         msg = ''.join(x for x in content.lower() if x.isalnum() or x.isspace())
         for x in settings.UNBANNED_WORDS:
             msg = msg.replace(x, '')
-        for x in settings.SPECIAL_SWEAR_WORDS:
-            if x in msg.split():
+        for x in msg.split():
+            if x in settings.SPECIAL_SWEAR_WORDS:
                 return True
         for x in settings.SWEAR_WORDS:
             if x in msg:
+                return True
+        deduplicated_msg = cls.deduplicate(msg)
+        for x in settings.SWEAR_WORDS:
+            if x in deduplicated_msg:
                 return True
         return False
 
