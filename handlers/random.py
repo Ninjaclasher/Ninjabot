@@ -101,12 +101,28 @@ class QuoteBase(BaseHandler):
             await self.send_message('No {} quotes available!'.format(self.quote_type))
             return
 
-        try:
-            idx = int(self.content[0])
-            quote = quotes[idx]
-        except (IndexError, ValueError):
-            quote = random.choice(quotes)
-        em = self.create_embed(self.quote_type, quote[1])
+        if len(self.content) > 0:
+            match_str = self.content_str.lower().strip()
+            try:
+                idx = int(match_str) % len(quotes)
+            except ValueError:
+                indices = []
+                for i, q in enumerate(quotes):
+                    if match_str in q[1].lower():
+                        indices.append(i)
+                if len(indices) == 0:
+                    await self.send_message('No such match.')
+                    return
+                idx = random.choice(indices)
+        else:
+            idx = random.randint(0, len(quotes) - 1)
+
+        quote = quotes[idx][1]
+
+        em = self.create_embed(self.quote_type, quote)
+        em.set_footer(text='{}/{}'.format(idx + 1, len(quotes)))
+        if len(self.quote_type) == 1:
+            em.set_author(name=quote.split('-')[-1])
         await self.send_message(embed=em)
 
 
