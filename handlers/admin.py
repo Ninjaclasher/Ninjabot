@@ -28,8 +28,19 @@ class AdminQuoteBase(AdminRequiredMixin, NonemptyMessageMixin, BaseHandler):
     argument_name = 'quote'
     quote_type = ''
 
+    def sanitize(self, content):
+        for x in {'“', '”', '‘', '’'}:
+            if x in content:
+                raise ValueError('disallowed unicode {} detected.'.format(x))
+        return content
+
     async def respond(self):
-        quote = ' '.join(self.content)
+        try:
+            quote = self.sanitize(' '.join(self.content))
+        except ValueError as e:
+            await self.send_message('Failed to add quote: {}'.format(e))
+            return
+
         database.add_quote(quote, len(self.quote_type) - 1, self.guild.id)
         logger.info(
             '%s added the quote "%s" for guild %d',
@@ -44,10 +55,47 @@ class AdminQuoteBase(AdminRequiredMixin, NonemptyMessageMixin, BaseHandler):
 class AdminSingleQuote(AdminQuoteBase):
     quote_type = '?'
 
+    def sanitize(self, content):
+        content = super().sanitize(content)
+        quote, dash, context = content.rpartition('-')
+
+        if len(quote) == 0:
+            raise ValueError('no quote detected.')
+        if len(dash) == 0 or len(context) == 0:
+            raise ValueError('no context detected.')
+
+        if not quote.endswith(' '):
+            quote += ' '
+        if not context.startswith(' '):
+            context = ' ' + context
+
+        return quote.capitalize() + dash + context.capitalize()
+
 
 @register_handler('add ??')
 class AdminDoubleQuote(AdminQuoteBase):
     quote_type = '??'
+
+    def sanitize(self, content):
+        content = super().sanitize(content)
+
+        lines = []
+        for i, line in enumerate(content.strip('\n').split('\n'), 1):
+            context, colon, quote = line.partition(':')
+
+            if len(context) == 0:
+                raise ValueError('no context detected on line {}.'.format(i))
+            if len(colon) == 0 or len(quote) == 0:
+                raise ValueError('no quote detected on line {}.'.format(i))
+
+            if not quote.startswith(' '):
+                quote = ' ' + quote
+            if not context.endswith(' '):
+                context += ' '
+
+            lines.append(context.capitalize() + colon + quote.capitalize())
+
+        return '\n'.join(lines)
 
 
 @register_handler('changeprofanity')
