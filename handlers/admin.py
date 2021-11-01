@@ -69,7 +69,7 @@ class AdminSingleQuote(AdminQuoteBase):
         if not context.startswith(' '):
             context = ' ' + context
 
-        return quote.capitalize() + dash + context.capitalize()
+        return quote + dash + context
 
 
 @register_handler('add ??')
@@ -93,7 +93,7 @@ class AdminDoubleQuote(AdminQuoteBase):
             if not context.endswith(' '):
                 context += ' '
 
-            lines.append(context.capitalize() + colon + quote.capitalize())
+            lines.append(context + colon + quote)
 
         return '\n'.join(lines)
 
