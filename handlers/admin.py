@@ -90,8 +90,7 @@ class AdminDoubleQuote(AdminQuoteBase):
 
             if not quote.startswith(' '):
                 quote = ' ' + quote
-            if not context.endswith(' '):
-                context += ' '
+            context = context.strip()
 
             lines.append(context + colon + quote)
 
