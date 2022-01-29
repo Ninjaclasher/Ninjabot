@@ -3,6 +3,8 @@ import logging
 import os
 import re
 import requests
+import subprocess
+import sys
 import threading
 
 from hashlib import sha512
@@ -24,19 +26,11 @@ Source: https://github.com/ivanseidel/Is-Now-Illegal
 """
 @register_handler('illegal')
 class IllegalGIF(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
-    @classmethod
-    def escape(cls, s):
-        return s.replace('"', '\\"').replace('`', '\\`')
-
-    @classmethod
-    def has_file(cls, filename):
-        return filename in os.listdir(os.path.join(settings.ILLEGAL_DIR, 'illegal_gifs'))
-
-    async def wait_generation(self, filename, thread=None):
+    async def wait_generation(self, file_location, thread=None):
         while True:
             if thread is None or not thread.is_alive():
-                if self.has_file(filename):
-                    await self.send_file(os.path.join(settings.ILLEGAL_DIR, 'illegal_gifs', filename))
+                if os.path.isfile(file_location):
+                    await self.send_file(file_location)
                     return
                 else:
                     raise OSError
@@ -58,20 +52,24 @@ class IllegalGIF(NonemptyMessageMixin, RateLimitMixin, BaseHandler):
         logger.info('Generating illegal GIF with message "%s"', gif_message)
 
         filename = sha512(gif_message.encode('utf-8')).hexdigest() + '.gif'
-        if self.has_file(filename):
+        file_location = os.path.join(settings.ILLEGAL_CACHE, filename)
+
+        if os.path.isfile(file_location):
             logger.info('Illegal GIF with message "%s" already exists. Sending and returning.', gif_message)
-            await self.bot.loop.create_task(self.wait_generation(filename))
+            await self.bot.loop.create_task(self.wait_generation(file_location))
             return
         msg = await self.send_message(self.discord_user.mention + ', please wait while the GIF is generated.')
         try:
-            command = 'cd {directory} && python3 rotoscope/generate.py "{content}" ' \
-                      'GIF/Trump/ "../illegal_gifs/{filename}"'
-            t = threading.Thread(target=os.system,
-                                 args=(command.format(directory=settings.ILLEGAL_DIR,
-                                                      content=self.escape(gif_message),
-                                                      filename=filename),))
+            t = threading.Thread(
+                target=subprocess.run,
+                args=([
+                    sys.executable, os.path.join(settings.ILLEGAL_DIR, 'rotoscope', 'generate.py'),
+                    gif_message, os.path.join(settings.ILLEGAL_DIR, 'rotoscope', 'GIF', 'Trump'),
+                    file_location,
+                ],),
+            )
             t.start()
-            await self.bot.loop.create_task(self.wait_generation(filename, t))
+            await self.bot.loop.create_task(self.wait_generation(file_location, t))
         except Exception:
             logger.error('Failed to generate illegal GIF with message "%s".', gif_message)
             await self.send_message('Generation of the GIF failed for an unknown reason...')

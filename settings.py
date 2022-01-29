@@ -11,6 +11,7 @@ MYSQL_PASSWD = '<password>'
 MYSQL_DATABASE = 'ninjabot'
 
 ILLEGAL_DIR = 'Illegal'
+ILLEGAL_CACHE = os.path.join(ILLEGAL_DIR, 'Cache')
 EMOJI_DIR = 'Emojis'
 
 LOGGER_FORMAT = '%(asctime)-15s %(message)s'
