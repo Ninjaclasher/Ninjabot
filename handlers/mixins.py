@@ -24,12 +24,13 @@ class RateLimitMixin:
     limit_seconds = 5
 
     async def initialize(self):
-        _now = time.time()
-        if _now - self.user.rate_limit[self.__class__] < self.limit_seconds:
-            await self.send_message('YOU ARE BEING RATE LIMITED! Please wait before using this command.' +
-                                    self.discord_user.mention)
-            return
-        self.user.rate_limit[self.__class__] = _now
+        if self.user.id not in settings.ADMIN:
+            _now = time.time()
+            if _now - self.user.rate_limit[self.__class__] < self.limit_seconds:
+                await self.send_message('YOU ARE BEING RATE LIMITED! Please wait before using this command.' +
+                                        self.discord_user.mention)
+                return
+            self.user.rate_limit[self.__class__] = _now
 
         await super(RateLimitMixin, self).initialize()
 

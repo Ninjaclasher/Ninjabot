@@ -8,7 +8,7 @@ from handlers import event_classes, handler_classes
 
 intents = discord.Intents.default()
 intents.members = True
-database.bot = discord.Client(max_messages=1000000, intents=intents
+database.bot = discord.Client(max_messages=1000, intents=intents)
 
 
 @database.bot.event
@@ -36,6 +36,7 @@ async def process_command(message, content):
 async def on_message(message):
     if message.author.bot or database.loading:
         return
+    await database.load_user(message.author.id)
 
     for name, event in event_classes.items():
         await event().dispatch(message=message, content=message.content.split(' '))

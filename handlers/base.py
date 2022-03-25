@@ -53,10 +53,9 @@ class BaseHandler:
     def create_embed(cls, title='', description='', colour=settings.BOT_COLOUR):
         return discord.Embed(title=title, description=description, colour=colour)
 
-    async def send_message(self, content=None, embed=None, file=None, files=None, delete_after=None, nonce=None):
+    async def send_message(self, *args, **kwargs):
         if self.user.id not in settings.BANNED_USERS:
-            return await self.channel.send(content=content, embed=embed, file=file, files=files,
-                                           delete_after=delete_after, nonce=nonce)
+            return await self.channel.send(*args, **kwargs)
         return None
 
     async def send_file(self, location):
