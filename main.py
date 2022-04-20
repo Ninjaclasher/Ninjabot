@@ -34,7 +34,7 @@ async def process_command(message, content):
 
 @database.bot.event
 async def on_message(message):
-    if message.author.bot or database.loading:
+    if (message.author.bot and message.author.id != 801254483987660810) or database.loading:
         return
     await database.load_user(message.author.id)
 
